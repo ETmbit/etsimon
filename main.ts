@@ -377,6 +377,43 @@ namespace etbasic {
 //  END INCLUDE  //
 ///////////////////
 
+//////////////////
+//  INCLUDE     //
+//  etinput.ts  //
+//////////////////
+
+let ETstartHandlers: (() => void)[] = []
+let ETstopHandlers: (() => void)[] = []
+
+input.onButtonPressed(Button.A, function () {
+    for (let ix = 0; ix < ETstartHandlers.length; ix++)
+        ETstartHandlers[ix]()
+})
+
+input.onButtonPressed(Button.B, function () {
+    for (let ix = 0; ix < ETstopHandlers.length; ix++)
+        ETstopHandlers[ix]()
+})
+
+input.onButtonPressed(Button.AB, function () {
+    input.calibrateCompass()
+})
+
+namespace etinput {
+
+    export function registerStartHandler(handler: () => void) {
+        ETstartHandlers.push(handler)
+    }
+
+    export function registerStopHandler(handler: () => void) {
+        ETstopHandlers.push(handler)
+    }
+}
+
+///////////////////
+//  END INCLUDE  //
+///////////////////
+
 /////////////////
 //  INCLUDE    //
 //  etsimon.ts //
@@ -390,6 +427,7 @@ namespace EtSimon {
     let options: (() => void)[] = []
     let buttonHandler: () => number
     let clearHandler: () => void
+    let gameHandler: () => void
 
     let tminit = 1000
     let tmout = 0
@@ -401,6 +439,9 @@ namespace EtSimon {
     let points = 0
 
     let ISGAMING = false
+
+    etinput.registerStartHandler(startGame)
+    etinput.registerStopHandler(stopGame)
 
     export function registerOptionHandler(handler: () => void) {
         options.push(handler)
@@ -606,12 +647,10 @@ namespace EtSimon {
     //% block="stop the game"
     //% block.loc.nl="stop het spel"
     export function stopGame() {
-        basic.showIcon(IconNames.Sad)
         ISGAMING = false
+        basic.showIcon(IconNames.Sad)
     }
 
-    //% block="start the game"
-    //% block.loc.nl="start het spel"
     export function startGame() {
         series = []
         ixseries = 0
@@ -619,8 +658,16 @@ namespace EtSimon {
         points = 0
         if (clearHandler) clearHandler()
         ISGAMING = true
+        if (gameHandler) gameHandler()
+    }
+
+    //% block="when the game starts"
+    //% block.loc.nl="als het spel start"
+    export function onStartGame(code : () => void) {
+        gameHandler = code
     }
 }
+
 
 basic.showArrow(ArrowNames.West)
 
