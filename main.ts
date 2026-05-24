@@ -661,6 +661,7 @@ namespace EtSimon {
         if (gameHandler) gameHandler()
     }
 
+    //% color="#802080"
     //% block="when the game starts"
     //% block.loc.nl="als het spel start"
     export function onStartGame(code : () => void) {
