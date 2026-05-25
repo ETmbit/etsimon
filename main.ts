@@ -504,67 +504,44 @@ namespace EtSimon {
         if (tmout >= tmdelta) tmout -= tmdelta
     }
 
-    //% block="show the points"
-    //% block.loc.nl="toon de score"
-    export function showPoints() {
-        basic.clearScreen()
-        let points = EtSimon.getPoints()
-        basic.showNumber(points)
-        if (points < 10) etbasic.wait(2)
+    export function startGame() {
+        series = []
+        ixseries = 0
+        ixoption = -1
+        points = 0
         if (clearHandler) clearHandler()
-        basic.showArrow(ArrowNames.West)
+        ISGAMING = true
+        if (gameHandler) gameHandler()
     }
 
-    //% block="increase the points"
-    //% block.loc.nl="verhoog de score"
-    export function increasePoints() {
-        points += 1
+    //% block="stop the game"
+    //% block.loc.nl="stop het spel"
+    export function stopGame() {
+        ISGAMING = false
+        basic.showIcon(IconNames.Sad)
     }
 
-    //% block="chosen wrongly"
-    //% block.loc.nl="verkeerd gekozen"
-    export function hasFailed(): boolean {
-        return (ixoption !== ixbutton)
+    //% block="the game is busy"
+    //% block.loc.nl="het spel bezig is"
+    export function isGaming(): boolean {
+        return ISGAMING
     }
 
-    //% block="chosen rightly"
-    //% block.loc.nl="juist gekozen"
-    export function isSuccess(): boolean {
-        return (ixoption === ixbutton)
+    //% color="#802080"
+    //% block="when the game starts"
+    //% block.loc.nl="als het spel start"
+    export function onStartGame(code: () => void) {
+        gameHandler = code
     }
 
-    //% block="the presented option"
-    //% block.loc.nl="de huidige"
-    export function getCurrentOption(): number {
-        return ixoption
-    }
-
-    //% block="the choice"
-    //% block.loc.nl="de keuze"
-    export function getButtonOption(): number {
-        return ixbutton
-    }
-
-    //% block="wait until a choice is made"
-    //% block.loc.nl="wacht tot er is gekozen"
-    export function waitForButton() {
-        if (buttonHandler) {
-            let tm = control.millis() + tmout
-            do {
-                ixbutton = buttonHandler()
-                basic.pause(1)
-            } while (ixbutton === -1 && tm > control.millis())
-        }
-        else
-            ixbutton = -1
-    }
-
+    //% subcategory="Serie"
     //% block="ask the next"
     //% block.loc.nl="vraag de volgende"
     export function askNextOption() {
         setNextOption()
     }
 
+    //% subcategory="Serie"
     //% block="ask the first"
     //% block.loc.nl="vraag de eerste"
     export function askFirstOption() {
@@ -573,6 +550,7 @@ namespace EtSimon {
         setFirstOption()
     }
 
+    //% subcategory="Serie"
     //% block="ask all"
     //% block.loc.nl="vraag alles"
     export function askAllOptions() {
@@ -589,6 +567,8 @@ namespace EtSimon {
             }
         }
     }
+
+    //% subcategory="Serie"
     //% block="show the next"
     //% block.loc.nl="toon de volgende"
     export function showNextOption() {
@@ -596,6 +576,7 @@ namespace EtSimon {
         showCurrentOption()
     }
 
+    //% subcategory="Serie"
     //% block="show the first"
     //% block.loc.nl="toon de eerste"
     export function showFirstOption() {
@@ -605,6 +586,7 @@ namespace EtSimon {
         showCurrentOption()
     }
 
+    //% subcategory="Serie"
     //% block="show all"
     //% block.loc.nl="toon alles"
     export function showAllOptions() {
@@ -613,6 +595,7 @@ namespace EtSimon {
             showNextOption()
     }
 
+    //% subcategory="Serie"
     //% block="append the series"
     //% block.loc.nl="voeg een nieuwe aan de serie toe"
     export function appendOption() {
@@ -620,52 +603,87 @@ namespace EtSimon {
         series.push(opt)
     }
 
-    //% block="all have been chosen rightly"
-    //% block.loc.nl="alles goed is gekozen"
-    export function isSeriesEnd(): boolean {
-        return (ISGAMING && (ixseries >= series.length))
-    }
-
+    //% subcategory="Serie"
     //% block="still continuing the series"
     //% block.loc.nl="nog met de serie bezig"
     export function isInSeries(): boolean {
         return (ISGAMING && (ixseries < series.length))
     }
 
+    //% subcategory="Serie"
     //% block="the next series is required"
     //% block.loc.nl="de volgende serie nodig is"
     export function restartSeries() {
         ixseries = 0
     }
 
-    //% block="the game is busy"
-    //% block.loc.nl="het spel bezig is"
-    export function isGaming(): boolean {
-        return ISGAMING
+    //% subcategory="Keuze"
+    //% block="all have been chosen rightly"
+    //% block.loc.nl="alles goed is gekozen"
+    export function isSeriesEnd(): boolean {
+        return (ISGAMING && (ixseries >= series.length))
     }
 
-    //% block="stop the game"
-    //% block.loc.nl="stop het spel"
-    export function stopGame() {
-        ISGAMING = false
-        basic.showIcon(IconNames.Sad)
+    //% subcategory="Keuze"
+    //% block="chosen wrongly"
+    //% block.loc.nl="verkeerd gekozen"
+    export function hasFailed(): boolean {
+        return (ixoption !== ixbutton)
     }
 
-    export function startGame() {
-        series = []
-        ixseries = 0
-        ixoption = -1
-        points = 0
+    //% subcategory="Keuze"
+    //% block="chosen rightly"
+    //% block.loc.nl="juist gekozen"
+    export function isSuccess(): boolean {
+        return (ixoption === ixbutton)
+    }
+
+    //% subcategory="Keuze"
+    //% block="the presented option"
+    //% block.loc.nl="de huidige"
+    export function getCurrentOption(): number {
+        return ixoption
+    }
+
+    //% subcategory="Keuze"
+    //% block="the choice"
+    //% block.loc.nl="de keuze"
+    export function getButtonOption(): number {
+        return ixbutton
+    }
+
+    //% subcategory="Keuze"
+    //% block="wait until a choice is made"
+    //% block.loc.nl="wacht tot er is gekozen"
+    export function waitForButton() {
+        if (buttonHandler) {
+            let tm = control.millis() + tmout
+            do {
+                ixbutton = buttonHandler()
+                basic.pause(1)
+            } while (ixbutton === -1 && tm > control.millis())
+        }
+        else
+            ixbutton = -1
+    }
+
+    //% subcategory="Score"
+    //% block="show the points"
+    //% block.loc.nl="toon de score"
+    export function showPoints() {
+        basic.clearScreen()
+        let points = EtSimon.getPoints()
+        basic.showNumber(points)
+        if (points < 10) etbasic.wait(2)
         if (clearHandler) clearHandler()
-        ISGAMING = true
-        if (gameHandler) gameHandler()
+        basic.showArrow(ArrowNames.West)
     }
 
-    //% color="#802080"
-    //% block="when the game starts"
-    //% block.loc.nl="als het spel start"
-    export function onStartGame(code : () => void) {
-        gameHandler = code
+    //% subcategory="Score"
+    //% block="increase the points"
+    //% block.loc.nl="verhoog de score"
+    export function increasePoints() {
+        points += 1
     }
 }
 
