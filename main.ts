@@ -534,11 +534,26 @@ namespace EtSimon {
         gameHandler = code
     }
 
+    function askOption() : boolean {
+        if (isInSeries()) {
+            waitForButton()
+            if (ixbutton === ixoption)
+                increasePoints()
+            else {
+                stopGame()
+                return false
+            }
+            return true
+        }
+        return false
+    }
+
     //% subcategory="Serie"
     //% block="ask the next"
     //% block.loc.nl="vraag de volgende"
     export function askNextOption() {
         setNextOption()
+        askOption()
     }
 
     //% subcategory="Serie"
@@ -548,23 +563,18 @@ namespace EtSimon {
         etbasic.wait(0.3)
         basic.showIcon(IconNames.Heart)
         setFirstOption()
+        askOption()
     }
 
     //% subcategory="Serie"
     //% block="ask all"
     //% block.loc.nl="vraag alles"
     export function askAllOptions() {
-        askFirstOption()
-        while (isInSeries()) {
-            waitForButton()
-            if (ixbutton === ixoption) {
-                increasePoints()
-                askNextOption()
-            }
-            else {
-                stopGame()
-                break
-            }
+        etbasic.wait(0.3)
+        basic.showIcon(IconNames.Heart)
+        setFirstOption()
+        while (askOption()) {
+            setNextOption()
         }
     }
 
@@ -596,8 +606,8 @@ namespace EtSimon {
     }
 
     //% subcategory="Serie"
-    //% block="append the series"
-    //% block.loc.nl="voeg een nieuwe aan de serie toe"
+    //% block="append a choice to the series"
+    //% block.loc.nl="voeg een keuze aan de serie toe"
     export function appendOption() {
         let opt = etbasic.randomInt(0, options.length - 1)
         series.push(opt)
@@ -608,20 +618,6 @@ namespace EtSimon {
     //% block.loc.nl="nog met de serie bezig"
     export function isInSeries(): boolean {
         return (ISGAMING && (ixseries < series.length))
-    }
-
-    //% subcategory="Serie"
-    //% block="the next series is required"
-    //% block.loc.nl="de volgende serie nodig is"
-    export function restartSeries() {
-        ixseries = 0
-    }
-
-    //% subcategory="Keuze"
-    //% block="all have been chosen rightly"
-    //% block.loc.nl="alles goed is gekozen"
-    export function isSeriesEnd(): boolean {
-        return (ISGAMING && (ixseries >= series.length))
     }
 
     //% subcategory="Keuze"
@@ -665,6 +661,21 @@ namespace EtSimon {
         }
         else
             ixbutton = -1
+    }
+
+    //% subcategory="Keuze"
+    //% block="continue with the next choice"
+    //% block.loc.nl="ga door met de volgende keuze"
+    export function continueChoosing() {
+        setNextOption()
+    }
+
+    //% subcategory="Keuze"
+    //% block="begin with the first choice"
+    //% block.loc.nl="begin met de eerste keuze"
+    export function beginChoosing() {
+        setFirstOption()
+        basic.showIcon(IconNames.Heart)
     }
 
     //% subcategory="Score"
