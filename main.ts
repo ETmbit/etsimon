@@ -635,8 +635,8 @@ namespace EtSimon {
     }
 
     //% subcategory="Keuze"
-    //% block="the presented option"
-    //% block.loc.nl="de huidige"
+    //% block="the current of the series"
+    //% block.loc.nl="de huidige van de serie"
     export function getCurrentOption(): number {
         return ixoption
     }
@@ -664,15 +664,15 @@ namespace EtSimon {
     }
 
     //% subcategory="Keuze"
-    //% block="continue with the next choice"
-    //% block.loc.nl="ga door met de volgende keuze"
+    //% block="continue with the next of the series"
+    //% block.loc.nl="ga door met de volgende van de serie"
     export function continueChoosing() {
         setNextOption()
     }
 
     //% subcategory="Keuze"
-    //% block="begin with the first choice"
-    //% block.loc.nl="begin met de eerste keuze"
+    //% block="begin with the first of the series"
+    //% block.loc.nl="begin met de eerste van de serie"
     export function beginChoosing() {
         setFirstOption()
         basic.showIcon(IconNames.Heart)
